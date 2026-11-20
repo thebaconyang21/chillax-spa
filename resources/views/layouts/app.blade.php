@@ -24,10 +24,10 @@
                 $menuItems = [
                     ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'dashboard'],
                     ['label' => 'Appointment Management', 'icon' => 'calendar', 'route' => 'appointments'],
-                    ['label' => 'Customer Management', 'icon' => 'users'],
-                    ['label' => 'Service Management', 'icon' => 'spa'],
+                    ['label' => 'Customer Management', 'icon' => 'users', 'route' => 'customers'],
+                    ['label' => 'Service Management', 'icon' => 'spa', 'route' => 'services'],
                     ['label' => 'Therapist & Commission', 'icon' => 'person'],
-                    ['label' => 'Point of Sale (POS)', 'icon' => 'cart'],
+                    ['label' => 'Point of Sale (POS)', 'icon' => 'cart', 'route' => 'pos'],
                     ['label' => 'Transaction History', 'icon' => 'receipt'],
                     ['label' => 'Reports', 'icon' => 'chart'],
                     ['label' => 'User Management', 'icon' => 'settings'],
