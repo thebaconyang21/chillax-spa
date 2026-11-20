@@ -28,7 +28,7 @@
                     ['label' => 'Service Management', 'icon' => 'spa', 'route' => 'services'],
                     ['label' => 'Therapist & Commission', 'icon' => 'person', 'route' => 'therapists'],
                     ['label' => 'Point of Sale (POS)', 'icon' => 'cart', 'route' => 'pos'],
-                    ['label' => 'Transaction History', 'icon' => 'receipt'],
+                    ['label' => 'Transaction History', 'icon' => 'receipt', 'route' => 'transactions'],
                     ['label' => 'Reports', 'icon' => 'chart'],
                     ['label' => 'User Management', 'icon' => 'settings'],
                 ];

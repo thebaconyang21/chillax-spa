@@ -33,3 +33,7 @@ Route::get('/pos', function () {
 Route::get('/therapists', function () {
     return view('therapists');
 })->name('therapists');
+
+Route::get('/transactions', function () {
+    return view('transactions');
+})->name('transactions');
