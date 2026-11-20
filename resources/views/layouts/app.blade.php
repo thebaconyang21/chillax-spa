@@ -26,7 +26,7 @@
                     ['label' => 'Appointment Management', 'icon' => 'calendar', 'route' => 'appointments'],
                     ['label' => 'Customer Management', 'icon' => 'users', 'route' => 'customers'],
                     ['label' => 'Service Management', 'icon' => 'spa', 'route' => 'services'],
-                    ['label' => 'Therapist & Commission', 'icon' => 'person'],
+                    ['label' => 'Therapist & Commission', 'icon' => 'person', 'route' => 'therapists'],
                     ['label' => 'Point of Sale (POS)', 'icon' => 'cart', 'route' => 'pos'],
                     ['label' => 'Transaction History', 'icon' => 'receipt'],
                     ['label' => 'Reports', 'icon' => 'chart'],

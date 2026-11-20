@@ -29,3 +29,7 @@ Route::get('/customers', function () {
 Route::get('/pos', function () {
     return view('pos');
 })->name('pos');
+
+Route::get('/therapists', function () {
+    return view('therapists');
+})->name('therapists');
