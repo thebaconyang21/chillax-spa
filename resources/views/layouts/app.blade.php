@@ -23,7 +23,7 @@
             @php
                 $menuItems = [
                     ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'dashboard'],
-                    ['label' => 'Appointment Management', 'icon' => 'calendar'],
+                    ['label' => 'Appointment Management', 'icon' => 'calendar', 'route' => 'appointments'],
                     ['label' => 'Customer Management', 'icon' => 'users'],
                     ['label' => 'Service Management', 'icon' => 'spa'],
                     ['label' => 'Therapist & Commission', 'icon' => 'person'],
