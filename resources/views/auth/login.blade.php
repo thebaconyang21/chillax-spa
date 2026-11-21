@@ -15,8 +15,8 @@
         <div class="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full border border-gold/10" aria-hidden="true"></div>
         <div class="pointer-events-none absolute -bottom-36 -right-24 h-96 w-96 rounded-full border border-gold/10" aria-hidden="true"></div>
 
-        <section class="relative my-auto w-full max-w-md rounded-3xl border border-gold/45 bg-gold/10 p-1.5 shadow-2xl shadow-black/25">
-            <div class="rounded-[1.35rem] border border-gold/25 bg-cream px-6 py-9 sm:px-10 sm:py-11">
+        <section class="relative my-auto w-full max-w-md rounded-3xl border border-gold/45 bg-gold/10 p-1.5 shadow-2xl shadow-black/25 backdrop-blur-sm">
+            <div class="rounded-[1.35rem] border border-gold/25 bg-cream/95 px-6 py-9 shadow-inner sm:px-10 sm:py-11">
                 <header class="mb-8 text-center">
                     <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gold/50 bg-gold/10 text-maroon">
                         <svg class="h-8 w-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

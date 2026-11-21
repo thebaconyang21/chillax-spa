@@ -13,9 +13,9 @@
 <body class="min-h-screen bg-cream font-sans text-ink antialiased">
     <div id="sidebar-overlay" class="fixed inset-0 z-30 hidden bg-ink/50 md:hidden"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col bg-maroon text-white shadow-xl transition-transform duration-300 md:translate-x-0">
-        <a href="{{ route('dashboard') }}" class="flex flex-col items-center border-b border-white/15 px-6 py-7 text-center">
-            <span class="font-display text-5xl leading-none text-gold">Chillax Spa</span>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col bg-maroon text-white shadow-2xl transition-transform duration-300 md:translate-x-0">
+        <a href="{{ route('dashboard') }}" class="flex flex-col items-center border-b border-white/10 px-6 py-6 text-center">
+            <span class="font-display text-5xl leading-none text-gold drop-shadow-sm">Chillax Spa</span>
             <span class="mt-2 text-[10px] tracking-[0.18em] text-white/75">Relax &bull; Refresh &bull; Rejuvenate</span>
         </a>
 
@@ -40,7 +40,7 @@
                 @endphp
                 <a href="{{ isset($item['route']) ? route($item['route']) : '#' }}"
                     @if ($isActive) aria-current="page" @endif
-                    class="flex min-h-12 items-center gap-3 rounded-lg px-4 py-3 text-sm transition {{ $isActive ? 'bg-gold font-semibold text-maroon shadow-sm' : 'text-white/85 hover:bg-white/10 hover:text-white' }}">
+                    class="flex min-h-12 items-center gap-3 rounded-lg px-4 py-3 text-[13px] transition {{ $isActive ? 'bg-gold font-semibold text-maroon shadow-sm' : 'text-white/80 hover:translate-x-0.5 hover:bg-white/10 hover:text-white' }}">
                     <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         @switch($item['icon'])
                             @case('dashboard')
@@ -89,17 +89,25 @@
     </aside>
 
     <div class="min-h-screen md:pl-72">
-        <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-maroon/10 bg-white/90 px-4 backdrop-blur sm:px-7">
+        <header id="app-header" class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-maroon/10 bg-white/85 px-4 backdrop-blur-xl sm:px-7">
             <button id="sidebar-toggle" type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink transition hover:bg-maroon/5 focus:outline-none focus:ring-2 focus:ring-gold md:hidden" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
                 <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <div class="hidden text-sm text-ink/60 sm:block">@yield('breadcrumb', 'Spa Management')</div>
             <div class="ml-auto flex items-center gap-3">
                 <div class="text-right">
-                    <p class="text-sm font-semibold">Jane Dela Cruz</p>
-                    <p class="text-xs text-ink/60">Administrator</p>
+                    <p class="text-sm font-semibold">{{ auth()->user()->name ?? 'Jane Dela Cruz' }}</p>
+                    <p class="text-xs text-ink/60">{{ auth()->user()?->isAdmin() ? 'Administrator' : 'Cashier / Staff' }}</p>
                 </div>
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-maroon/10 text-sm font-semibold text-maroon" aria-hidden="true">JD</div>
+                @php
+                    $layoutUserName = auth()->user()->name ?? 'Jane Dela Cruz';
+                    $layoutInitials = collect(preg_split('/\s+/', trim($layoutUserName)))
+                        ->filter()
+                        ->take(2)
+                        ->map(fn ($part) => strtoupper(substr($part, 0, 1)))
+                        ->implode('');
+                @endphp
+                <div class="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-maroon/10 text-sm font-semibold text-maroon ring-4 ring-gold/5" aria-hidden="true">{{ $layoutInitials }}</div>
             </div>
         </header>
 
