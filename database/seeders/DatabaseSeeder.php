@@ -35,5 +35,12 @@ class DatabaseSeeder extends Seeder
                 'role' => 'cashier',
             ],
         );
+
+        $this->call([
+            ServiceSeeder::class,
+            AddonSeeder::class,
+            TherapistSeeder::class,
+            CustomerSeeder::class,
+        ]);
     }
 }
