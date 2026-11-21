@@ -8,6 +8,7 @@
     --color-gold: #d4a017;
     --color-cream: #fbf5ea;
     --color-ink: #342b29;
+    --line: rgba(107, 15, 26, 0.09);
 }
 
 @theme {
@@ -15,8 +16,36 @@
     --color-gold: #d4a017;
     --color-cream: #fbf5ea;
     --color-ink: #342b29;
-    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Great Vibes', cursive;
+    --font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+    font-family: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    letter-spacing: 0.005em;
+}
+
+.font-display {
+    font-family: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+}
+
+.brand-wordmark {
+    font-family: 'Great Vibes', cursive;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+main h1 {
+    font-size: clamp(1.9rem, 3.2vw, 2.65rem);
+    line-height: 1.2;
+}
+
+main h2 {
+    line-height: 1.3;
 }
 
 html {
@@ -24,9 +53,11 @@ html {
 }
 
 body {
+    min-height: 100vh;
     background-image:
-        radial-gradient(circle at 82% 8%, rgba(212, 160, 23, 0.08), transparent 22rem),
-        radial-gradient(circle at 20% 92%, rgba(107, 15, 26, 0.025), transparent 26rem);
+        radial-gradient(circle at 88% 4%, rgba(212, 160, 23, 0.11), transparent 28rem),
+        radial-gradient(circle at 12% 76%, rgba(107, 15, 26, 0.035), transparent 30rem),
+        linear-gradient(135deg, #fcf8f0 0%, #f8f3e9 52%, #fbf7ef 100%);
 }
 
 ::selection {
@@ -50,9 +81,10 @@ body {
 }
 
 #sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
     background-image:
-        linear-gradient(180deg, rgba(212, 160, 23, 0.08), transparent 18rem),
-        linear-gradient(135deg, #771522 0%, #5d0c16 100%);
+        radial-gradient(circle at 50% 0%, rgba(232, 190, 88, 0.16), transparent 22rem),
+        linear-gradient(160deg, #741522 0%, #5d0c16 62%, #4d0a13 100%);
 }
 
 #sidebar nav a {
@@ -61,28 +93,58 @@ body {
 }
 
 #sidebar nav a[aria-current="page"] {
-    box-shadow: 0 8px 18px rgba(40, 8, 12, 0.18);
+    box-shadow: 0 10px 22px rgba(40, 8, 12, 0.22), inset 3px 0 0 rgba(255, 255, 255, 0.45);
+}
+
+#sidebar nav a:not([aria-current="page"]):hover {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 header#app-header {
-    box-shadow: 0 1px 0 rgba(107, 15, 26, 0.04), 0 5px 18px rgba(52, 43, 41, 0.025);
+    background-color: rgba(255, 254, 250, 0.88);
+    box-shadow: 0 1px 0 rgba(107, 15, 26, 0.06), 0 8px 24px rgba(52, 43, 41, 0.035);
 }
 
 main section.rounded-xl,
 main article.rounded-xl {
+    border-color: var(--line);
     box-shadow:
         0 1px 2px rgba(52, 43, 41, 0.025),
-        0 10px 28px rgba(107, 15, 26, 0.055);
+        0 12px 30px rgba(66, 31, 28, 0.055),
+        0 2px 8px rgba(66, 31, 28, 0.025);
+}
+
+main section.rounded-xl:hover,
+main article.rounded-xl:hover {
+    box-shadow:
+        0 2px 4px rgba(52, 43, 41, 0.035),
+        0 16px 36px rgba(66, 31, 28, 0.075),
+        0 3px 10px rgba(66, 31, 28, 0.03);
 }
 
 main input:not([type="checkbox"]),
 main select {
+    background-color: rgba(255, 255, 255, 0.92);
     transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+main input:not([type="checkbox"]):focus,
+main select:focus {
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(212, 160, 23, 0.13);
 }
 
 main button,
 main a {
     transition-duration: 180ms;
+}
+
+main button:focus-visible,
+main a:focus-visible,
+#sidebar a:focus-visible,
+header#app-header button:focus-visible {
+    outline: 3px solid rgba(212, 160, 23, 0.68);
+    outline-offset: 3px;
 }
 
 main table {
@@ -91,7 +153,11 @@ main table {
 }
 
 main table thead {
-    background: rgba(251, 245, 234, 0.92);
+    background: linear-gradient(90deg, rgba(251, 245, 234, 0.96), rgba(248, 241, 226, 0.72));
+}
+
+main table thead th {
+    letter-spacing: 0.045em;
 }
 
 main table tbody tr {
@@ -99,7 +165,7 @@ main table tbody tr {
 }
 
 main table tbody tr:hover {
-    background: rgba(212, 160, 23, 0.035);
+    background: rgba(212, 160, 23, 0.055);
 }
 
 main [role="tab"][aria-selected="true"],
@@ -111,11 +177,38 @@ main [role="tab"][aria-selected="true"],
     main article.rounded-xl,
     main section.rounded-xl {
         animation: spa-fade-in 420ms ease-out both;
+        transition: box-shadow 200ms ease, border-color 200ms ease, transform 200ms ease;
     }
 
     main section.rounded-xl:nth-child(2),
     main article.rounded-xl:nth-child(2) {
         animation-delay: 60ms;
+    }
+}
+
+@media (max-width: 640px) {
+    header#app-header {
+        height: 4rem;
+    }
+
+    main {
+        padding-top: 1.25rem;
+    }
+
+    main section.rounded-xl,
+    main article.rounded-xl {
+        border-radius: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 

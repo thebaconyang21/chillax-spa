@@ -7,7 +7,7 @@
     <title>Log In - Chillax Spa</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-maroon font-sans text-ink antialiased">
@@ -24,7 +24,7 @@
                             <path d="M16 27V12M9 22c2 2 4 3 7 5M23 20c-2 2-4 3-7 5"/>
                         </svg>
                     </div>
-                    <h1 class="font-display text-6xl leading-none text-maroon">Chillax Spa</h1>
+                    <h1 class="brand-wordmark text-6xl leading-none text-maroon">Chillax Spa</h1>
                     <p class="mt-3 text-[10px] font-medium uppercase tracking-[0.22em] text-maroon/65">Relax &bull; Refresh &bull; Rejuvenate</p>
                     <div class="mx-auto mt-6 h-px w-16 bg-gold/70" aria-hidden="true"></div>
                     <h2 class="mt-6 text-lg font-semibold text-ink">Welcome Back</h2>

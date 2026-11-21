@@ -7,7 +7,7 @@
     <title>@yield('title', 'Dashboard') - Chillax Spa</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-cream font-sans text-ink antialiased">
@@ -15,7 +15,7 @@
 
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex w-72 -translate-x-full flex-col bg-maroon text-white shadow-2xl transition-transform duration-300 md:translate-x-0">
         <a href="{{ route('dashboard') }}" class="flex flex-col items-center border-b border-white/10 px-6 py-6 text-center">
-            <span class="font-display text-5xl leading-none text-gold drop-shadow-sm">Chillax Spa</span>
+            <span class="brand-wordmark text-5xl leading-none text-gold drop-shadow-sm">Chillax Spa</span>
             <span class="mt-2 text-[10px] tracking-[0.18em] text-white/75">Relax &bull; Refresh &bull; Rejuvenate</span>
         </a>
 
@@ -25,16 +25,17 @@
                     ['label' => 'Dashboard', 'icon' => 'dashboard', 'route' => 'dashboard'],
                     ['label' => 'Appointment Management', 'icon' => 'calendar', 'route' => 'appointments'],
                     ['label' => 'Customer Management', 'icon' => 'users', 'route' => 'customers'],
-                    ['label' => 'Service Management', 'icon' => 'spa', 'route' => 'services'],
-                    ['label' => 'Therapist & Commission', 'icon' => 'person', 'route' => 'therapists'],
+                    ['label' => 'Service Management', 'icon' => 'spa', 'route' => 'services', 'admin_only' => true],
+                    ['label' => 'Therapist & Commission', 'icon' => 'person', 'route' => 'therapists', 'admin_only' => true],
                     ['label' => 'Point of Sale (POS)', 'icon' => 'cart', 'route' => 'pos'],
                     ['label' => 'Transaction History', 'icon' => 'receipt', 'route' => 'transactions'],
-                    ['label' => 'Reports', 'icon' => 'chart', 'route' => 'reports'],
-                    ['label' => 'User Management', 'icon' => 'settings', 'route' => 'users'],
+                    ['label' => 'Reports', 'icon' => 'chart', 'route' => 'reports', 'admin_only' => true],
+                    ['label' => 'User Management', 'icon' => 'settings', 'route' => 'users', 'admin_only' => true],
                 ];
             @endphp
 
             @foreach ($menuItems as $item)
+                @if (! ($item['admin_only'] ?? false) || auth()->user()?->isAdmin())
                 @php
                     $isActive = isset($item['route']) && request()->routeIs($item['route']);
                 @endphp
@@ -74,6 +75,7 @@
                     </svg>
                     <span>{{ $item['label'] }}</span>
                 </a>
+                @endif
             @endforeach
         </nav>
 
