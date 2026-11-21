@@ -37,3 +37,11 @@ Route::get('/therapists', function () {
 Route::get('/transactions', function () {
     return view('transactions');
 })->name('transactions');
+
+Route::get('/reports', function () {
+    return view('reports');
+})->name('reports');
+
+Route::get('/users', function () {
+    return view('users');
+})->name('users');

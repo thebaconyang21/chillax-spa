@@ -29,8 +29,8 @@
                     ['label' => 'Therapist & Commission', 'icon' => 'person', 'route' => 'therapists'],
                     ['label' => 'Point of Sale (POS)', 'icon' => 'cart', 'route' => 'pos'],
                     ['label' => 'Transaction History', 'icon' => 'receipt', 'route' => 'transactions'],
-                    ['label' => 'Reports', 'icon' => 'chart'],
-                    ['label' => 'User Management', 'icon' => 'settings'],
+                    ['label' => 'Reports', 'icon' => 'chart', 'route' => 'reports'],
+                    ['label' => 'User Management', 'icon' => 'settings', 'route' => 'users'],
                 ];
             @endphp
 
