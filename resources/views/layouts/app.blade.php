@@ -78,10 +78,13 @@
         </nav>
 
         <div class="border-t border-white/15 p-3">
-            <a href="#" class="flex min-h-12 items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/85 transition hover:bg-white/10 hover:text-white">
-                <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M21 19V5"/></svg>
-                <span>Logout</span>
-            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="flex min-h-12 w-full items-center gap-3 rounded-lg px-4 py-3 text-sm text-white/85 transition hover:bg-white/10 hover:text-white">
+                    <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M21 19V5"/></svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
     </aside>
 

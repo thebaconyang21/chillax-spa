@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class PointOfSaleTest extends TestCase
 {
     public function test_pos_route_renders_service_picker_and_payment_summary(): void
     {
-        $response = $this->get('/pos');
+        $response = $this->actingAs((new User)->forceFill(['name' => 'Cashier', 'username' => 'cashier', 'role' => 'cashier']))->get('/pos');
 
         $response->assertOk()
             ->assertViewIs('pos')

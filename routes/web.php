@@ -1,47 +1,28 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::redirect('/', '/login');
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/appointments', function () {
-    return view('appointments');
-})->name('appointments');
+Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
+    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/appointments', fn () => view('appointments'))->name('appointments');
+    Route::get('/customers', fn () => view('customers'))->name('customers');
+    Route::get('/pos', fn () => view('pos'))->name('pos');
+    Route::get('/transactions', fn () => view('transactions'))->name('transactions');
+});
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
-Route::get('/services', function () {
-    return view('services');
-})->name('services');
-
-Route::get('/customers', function () {
-    return view('customers');
-})->name('customers');
-
-Route::get('/pos', function () {
-    return view('pos');
-})->name('pos');
-
-Route::get('/therapists', function () {
-    return view('therapists');
-})->name('therapists');
-
-Route::get('/transactions', function () {
-    return view('transactions');
-})->name('transactions');
-
-Route::get('/reports', function () {
-    return view('reports');
-})->name('reports');
-
-Route::get('/users', function () {
-    return view('users');
-})->name('users');
+Route::middleware(['auth', 'role:admin'])->group(function (): void {
+    Route::get('/therapists', fn () => view('therapists'))->name('therapists');
+    Route::get('/services', fn () => view('services'))->name('services');
+    Route::get('/reports', fn () => view('reports'))->name('reports');
+    Route::get('/users', fn () => view('users'))->name('users');
+});

@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class ReportsTest extends TestCase
 {
     public function test_reports_route_renders_report_tabs_and_tables(): void
     {
-        $response = $this->get('/reports');
+        $response = $this->actingAs((new User)->forceFill(['name' => 'Administrator', 'username' => 'admin', 'role' => 'admin']))->get('/reports');
 
         $response->assertOk()
             ->assertViewIs('reports')

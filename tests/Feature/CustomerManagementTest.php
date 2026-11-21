@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class CustomerManagementTest extends TestCase
 {
     public function test_customers_route_renders_profiles_and_history_panel(): void
     {
-        $response = $this->get('/customers');
+        $response = $this->actingAs((new User)->forceFill(['name' => 'Cashier', 'username' => 'cashier', 'role' => 'cashier']))->get('/customers');
 
         $response->assertOk()
             ->assertViewIs('customers')

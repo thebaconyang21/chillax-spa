@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class TransactionHistoryTest extends TestCase
 {
     public function test_transactions_route_renders_history_filters_and_receipt(): void
     {
-        $response = $this->get('/transactions');
+        $response = $this->actingAs((new User)->forceFill(['name' => 'Cashier', 'username' => 'cashier', 'role' => 'cashier']))->get('/transactions');
 
         $response->assertOk()
             ->assertViewIs('transactions')

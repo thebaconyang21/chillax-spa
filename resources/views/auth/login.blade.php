@@ -31,14 +31,18 @@
                     <p class="mt-1 text-sm text-ink/60">Sign in to your spa management account</p>
                 </header>
 
-                <form aria-label="Log in">
+                <form method="POST" action="{{ route('login') }}" aria-label="Log in">
+                    @csrf
                     <div class="space-y-5">
                         <div>
                             <label for="username" class="mb-2 block text-sm font-medium text-ink">Username</label>
                             <div class="relative">
                                 <svg class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-maroon/55" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
-                                <input id="username" name="username" type="text" autocomplete="username" placeholder="Enter your username" class="h-12 w-full rounded-xl border border-maroon/15 bg-white pl-11 pr-4 text-sm text-ink outline-none transition placeholder:text-ink/40 focus:border-gold focus:ring-2 focus:ring-gold/25">
+                                <input id="username" name="username" type="text" value="{{ old('username') }}" autocomplete="username" placeholder="Enter your username" class="h-12 w-full rounded-xl border border-maroon/15 bg-white pl-11 pr-4 text-sm text-ink outline-none transition placeholder:text-ink/40 focus:border-gold focus:ring-2 focus:ring-gold/25">
                             </div>
+                            @error('username')
+                                <p class="mt-2 text-sm font-medium text-red-700">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -53,7 +57,7 @@
                         </div>
                     </div>
 
-                    <button type="button" class="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gold px-5 text-sm font-semibold text-maroon shadow-md shadow-gold/20 transition hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cream">
+                    <button type="submit" class="mt-7 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gold px-5 text-sm font-semibold text-maroon shadow-md shadow-gold/20 transition hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2 focus:ring-offset-cream">
                         Log In
                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </button>

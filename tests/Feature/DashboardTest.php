@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
     public function test_dashboard_route_renders_overview_appointments_availability_and_actions(): void
     {
-        $response = $this->get('/dashboard');
+        $response = $this->actingAs((new User)->forceFill(['name' => 'Cashier', 'username' => 'cashier', 'role' => 'cashier']))->get('/dashboard');
 
         $response->assertOk()
             ->assertViewIs('dashboard')
