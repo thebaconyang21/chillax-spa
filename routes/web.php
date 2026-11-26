@@ -5,6 +5,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\TherapistScheduleController;
@@ -42,6 +43,8 @@ Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function (): void {
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
     Route::get('/therapists', [TherapistController::class, 'index'])->name('therapists');
     Route::post('/therapists', [TherapistController::class, 'store'])->name('therapists.store');
     Route::get('/therapists/{therapist}', [TherapistController::class, 'show'])->name('therapists.show');
@@ -57,7 +60,6 @@ Route::middleware(['auth', 'role:admin'])->group(function (): void {
     Route::post('/addons', [AddonController::class, 'store'])->name('addons.store');
     Route::put('/addons/{addon}', [AddonController::class, 'update'])->name('addons.update');
     Route::delete('/addons/{addon}', [AddonController::class, 'destroy'])->name('addons.destroy');
-    Route::get('/reports', fn () => view('reports'))->name('reports');
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
