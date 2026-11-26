@@ -20,6 +20,11 @@ class Transaction extends Model
         'payment_status',
     ];
 
+    public function getReceiptNumberAttribute(): string
+    {
+        return 'CS-'.str_pad((string) $this->id, 6, '0', STR_PAD_LEFT);
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

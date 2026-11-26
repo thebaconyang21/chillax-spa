@@ -14,7 +14,7 @@
         <header class="border-b border-dashed border-maroon/30 pb-5 text-center">
             <h1 class="font-display text-5xl text-maroon">Chillax Spa</h1>
             <p class="mt-1 text-xs tracking-widest text-ink/60">RELAX · REFRESH · REJUVENATE</p>
-            <p class="mt-5 text-sm font-semibold">Receipt {{ 'CS-'.str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT) }}</p>
+            <p class="mt-5 text-sm font-semibold">Receipt {{ $transaction->receipt_number }}</p>
             <p class="mt-1 text-xs text-ink/60">{{ \Illuminate\Support\Carbon::parse($transaction->transaction_date)->timezone('Asia/Manila')->format('M j, Y · g:i A') }}</p>
         </header>
         <div class="space-y-1 border-b border-dashed border-maroon/30 py-4 text-sm"><p><span class="text-ink/55">Cashier:</span> {{ $transaction->user->name }}</p><p><span class="text-ink/55">Customer:</span> {{ $transaction->customer->customer_name }}</p><p><span class="text-ink/55">Payment:</span> {{ $transaction->payment_method === 'ecash' ? 'E-cash' : 'Cash' }}</p></div>

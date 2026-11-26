@@ -8,6 +8,7 @@ use App\Http\Controllers\PosController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\TherapistScheduleController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,8 @@ Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
     Route::get('/pos', [PosController::class, 'index'])->name('pos');
     Route::post('/pos', [PosController::class, 'store'])->name('pos.store');
     Route::get('/pos/receipt/{transaction}', [PosController::class, 'receipt'])->name('pos.receipt');
-    Route::get('/transactions', fn () => view('transactions'))->name('transactions');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function (): void {
