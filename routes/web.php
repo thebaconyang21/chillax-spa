@@ -4,6 +4,7 @@ use App\Http\Controllers\AddonController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\PosController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TherapistController;
 use App\Http\Controllers\TherapistScheduleController;
@@ -32,7 +33,9 @@ Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
     Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
-    Route::get('/pos', fn () => view('pos'))->name('pos');
+    Route::get('/pos', [PosController::class, 'index'])->name('pos');
+    Route::post('/pos', [PosController::class, 'store'])->name('pos.store');
+    Route::get('/pos/receipt/{transaction}', [PosController::class, 'receipt'])->name('pos.receipt');
     Route::get('/transactions', fn () => view('transactions'))->name('transactions');
 });
 

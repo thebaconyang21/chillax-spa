@@ -38,6 +38,11 @@ class TransactionDetail extends Model
         return $this->hasMany(DetailAddon::class);
     }
 
+    public function addons(): HasMany
+    {
+        return $this->hasMany(DetailAddon::class, 'transaction_detail_id');
+    }
+
     public function commission(): HasOne
     {
         return $this->hasOne(Commission::class);
