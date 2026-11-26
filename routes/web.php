@@ -4,6 +4,7 @@ use App\Http\Controllers\AddonController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServiceController;
@@ -23,7 +24,7 @@ Route::middleware('guest')->group(function (): void {
 Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
     Route::get('/appointments/available-therapists', [AppointmentController::class, 'availableTherapists'])->name('appointments.available-therapists');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');

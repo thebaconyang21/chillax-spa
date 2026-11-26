@@ -840,6 +840,8 @@
                 appointment_time: @json(old('appointment_time')),
                 therapist_id: @json(old('therapist_id')),
             });
+        @elseif (request()->boolean('new'))
+            openAppointmentModal();
         @else
             if (appointmentRows.length > 0) {
                 showAppointmentDetails(appointmentRows[0]);

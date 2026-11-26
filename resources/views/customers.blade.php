@@ -469,6 +469,8 @@
             openCustomerEditor(failedCustomer);
             document.getElementById('customer-name').value = @js(old('customer_name', ''));
             document.getElementById('customer-phone').value = @js(old('contact_number', ''));
+        @elseif (request()->boolean('new'))
+            openCustomerEditor();
         @endif
 
         const firstCustomerRow = document.querySelector('[data-customer-row]');
