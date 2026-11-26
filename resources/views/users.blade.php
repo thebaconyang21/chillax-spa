@@ -4,14 +4,28 @@
 @section('breadcrumb', 'User Management')
 
 @section('content')
-    @php
-        $users = [
-            ['id' => 1, 'name' => 'Jane Dela Cruz', 'username' => 'jane.admin', 'role' => 'Administrator', 'status' => 'Active'],
-            ['id' => 2, 'name' => 'Paolo Santos', 'username' => 'paolo.cashier', 'role' => 'Cashier-Staff', 'status' => 'Active'],
-            ['id' => 3, 'name' => 'Karla Mendoza', 'username' => 'karla.staff', 'role' => 'Cashier-Staff', 'status' => 'Inactive'],
-            ['id' => 4, 'name' => 'Miguel Torres', 'username' => 'miguel.cashier', 'role' => 'Cashier-Staff', 'status' => 'Active'],
-        ];
-    @endphp
+    @if (session('success'))
+        <div role="status" class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div role="alert" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div role="alert" class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            <p class="font-semibold">Please correct the following errors:</p>
+            <ul class="mt-2 list-inside list-disc">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <div class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
@@ -24,28 +38,29 @@
         </button>
     </div>
 
-    <section class="mb-5 flex flex-col gap-3 rounded-xl border border-maroon/10 bg-white p-4 shadow-sm sm:flex-row sm:items-end" aria-label="User filters">
+    <form method="GET" action="{{ route('users') }}" class="mb-5 flex flex-col gap-3 rounded-xl border border-maroon/10 bg-white p-4 shadow-sm sm:flex-row sm:items-end" aria-label="User filters">
         <div class="w-full sm:max-w-md">
             <label for="user-search" class="mb-1.5 block text-xs font-semibold text-ink/70">Search</label>
             <div class="relative">
                 <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-                <input id="user-search" type="search" placeholder="Search name or username..." class="h-11 w-full rounded-lg border border-maroon/15 bg-cream/30 pl-9 pr-3 text-sm outline-none placeholder:text-ink/40 focus:border-gold focus:ring-2 focus:ring-gold/25">
+                <input id="user-search" name="search" type="search" value="{{ $search }}" placeholder="Search name or username..." class="h-11 w-full rounded-lg border border-maroon/15 bg-cream/30 pl-9 pr-3 text-sm outline-none placeholder:text-ink/40 focus:border-gold focus:ring-2 focus:ring-gold/25">
             </div>
         </div>
         <div class="w-full sm:w-52">
             <label for="role-filter" class="mb-1.5 block text-xs font-semibold text-ink/70">Role</label>
-            <select id="role-filter" class="h-11 w-full rounded-lg border border-maroon/15 bg-cream/30 px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
-                <option>All</option>
-                <option>Administrator</option>
-                <option>Cashier-Staff</option>
+            <select id="role-filter" name="role" class="h-11 w-full rounded-lg border border-maroon/15 bg-cream/30 px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                <option value="" @selected($role === '')>All roles</option>
+                <option value="admin" @selected($role === 'admin')>Administrator</option>
+                <option value="cashier" @selected($role === 'cashier')>Cashier-Staff</option>
             </select>
         </div>
-    </section>
+        <button type="submit" class="h-11 rounded-lg bg-maroon px-5 text-sm font-semibold text-white transition hover:bg-maroon/90 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2">Apply Filters</button>
+    </form>
 
     <section class="overflow-hidden rounded-xl border border-maroon/10 bg-white shadow-sm" aria-labelledby="users-heading">
         <div class="border-b border-maroon/10 px-5 py-4">
             <h2 id="users-heading" class="text-base font-semibold text-ink">Users</h2>
-            <p id="user-count" class="mt-1 text-xs text-ink/55">{{ count($users) }} users</p>
+            <p class="mt-1 text-xs text-ink/55">{{ $users->total() }} users</p>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full min-w-[820px] text-left text-sm">
@@ -58,20 +73,23 @@
                         <th scope="col" class="px-5 py-3.5 text-right font-semibold">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="users-table-body" class="divide-y divide-maroon/5">
-                    @foreach ($users as $user)
-                        <tr data-user-row data-user-id="{{ $user['id'] }}" data-name="{{ $user['name'] }}" data-username="{{ $user['username'] }}" data-role="{{ $user['role'] }}" data-status="{{ $user['status'] }}" class="transition hover:bg-cream/45">
-                            <td class="whitespace-nowrap px-5 py-4 font-medium text-ink">{{ $user['name'] }}</td>
-                            <td class="whitespace-nowrap px-5 py-4 text-ink/70">{{ $user['username'] }}</td>
+                <tbody class="divide-y divide-maroon/5">
+                    @forelse ($users as $user)
+                        @php
+                            $isCurrentUser = auth()->id() === $user->id;
+                        @endphp
+                        <tr data-user-row data-user-id="{{ $user->id }}" data-name="{{ $user->name }}" data-username="{{ $user->username }}" data-role="{{ $user->role }}" data-status="{{ $user->is_active ? 'active' : 'inactive' }}" data-current-user="{{ $isCurrentUser ? 'true' : 'false' }}" class="transition hover:bg-cream/45">
+                            <td class="whitespace-nowrap px-5 py-4 font-medium text-ink">{{ $user->name }}</td>
+                            <td class="whitespace-nowrap px-5 py-4 text-ink/70">{{ $user->username }}</td>
                             <td class="px-5 py-4">
-                                @if ($user['role'] === 'Administrator')
+                                @if ($user->role === 'admin')
                                     <span class="inline-flex rounded-full bg-maroon/10 px-2.5 py-1 text-xs font-semibold text-maroon">Administrator</span>
                                 @else
                                     <span class="inline-flex rounded-full bg-gold/20 px-2.5 py-1 text-xs font-semibold text-maroon">Cashier-Staff</span>
                                 @endif
                             </td>
-                            <td class="px-5 py-4" data-status-cell>
-                                @if ($user['status'] === 'Active')
+                            <td class="px-5 py-4">
+                                @if ($user->is_active)
                                     <span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">Active</span>
                                 @else
                                     <span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">Inactive</span>
@@ -80,19 +98,51 @@
                             <td class="px-5 py-4">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" data-user-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
-                                    <button type="button" data-user-action="toggle" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">
-                                        {{ $user['status'] === 'Active' ? 'Deactivate' : 'Activate' }}
-                                    </button>
-                                    <button type="button" data-user-action="delete" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-50">Delete</button>
+                                    @if (! $isCurrentUser)
+                                        <form method="POST" action="{{ route('users.toggle', $user) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">
+                                                {{ $user->is_active ? 'Deactivate' : 'Activate' }}
+                                            </button>
+                                        </form>
+                                        <button type="button" data-user-action="delete" data-delete-url="{{ route('users.destroy', $user) }}" data-delete-name="{{ $user->name }}" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-50">Delete</button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
-                    <tr id="no-users" class="hidden">
-                        <td colspan="5" class="px-5 py-10 text-center text-sm text-ink/55">No users match your filters.</td>
-                    </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-5 py-10 text-center text-sm text-ink/55">No users match your filters.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="flex flex-col justify-between gap-3 border-t border-maroon/10 px-4 py-4 sm:flex-row sm:items-center sm:px-5">
+            <p class="text-xs text-ink/60">
+                Showing {{ $users->firstItem() ?? 0 }}–{{ $users->lastItem() ?? 0 }} of {{ $users->total() }} users
+            </p>
+            @if ($users->hasPages())
+                <nav class="flex flex-wrap items-center justify-end gap-1" aria-label="User pagination">
+                    @if ($users->onFirstPage())
+                        <span class="rounded-lg border border-maroon/10 px-3 py-2 text-xs text-ink/35" aria-disabled="true">Previous</span>
+                    @else
+                        <a href="{{ $users->previousPageUrl() }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Previous</a>
+                    @endif
+
+                    @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                        <a href="{{ $url }}" @if ($page === $users->currentPage()) aria-current="page" @endif class="min-w-9 rounded-lg border px-3 py-2 text-center text-xs font-medium transition {{ $page === $users->currentPage() ? 'border-maroon bg-maroon text-white' : 'border-maroon/15 text-maroon hover:border-gold hover:bg-gold/10' }}">{{ $page }}</a>
+                    @endforeach
+
+                    @if ($users->hasMorePages())
+                        <a href="{{ $users->nextPageUrl() }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Next</a>
+                    @else
+                        <span class="rounded-lg border border-maroon/10 px-3 py-2 text-xs text-ink/35" aria-disabled="true">Next</span>
+                    @endif
+                </nav>
+            @endif
         </div>
     </section>
 
@@ -107,32 +157,34 @@
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg>
                 </button>
             </div>
-            <form id="user-form" class="space-y-4 p-5 sm:p-6">
-                <input id="user-id" type="hidden">
+            <form id="user-form" method="POST" action="{{ route('users.store') }}" class="space-y-4 p-5 sm:p-6">
+                @csrf
+                @method('PUT')
+                <input id="user-id" name="user_id" type="hidden" value="{{ old('user_id') }}">
                 <div>
                     <label for="full-name" class="mb-1.5 block text-sm font-medium text-ink">Full Name</label>
-                    <input id="full-name" type="text" required autocomplete="name" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                    <input id="full-name" name="name" type="text" value="{{ old('name') }}" required maxlength="100" autocomplete="name" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
                 </div>
                 <div>
                     <label for="username" class="mb-1.5 block text-sm font-medium text-ink">Username</label>
-                    <input id="username" type="text" required autocomplete="username" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                    <input id="username" name="username" type="text" value="{{ old('username') }}" required minlength="4" maxlength="30" autocomplete="username" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label for="password" class="mb-1.5 block text-sm font-medium text-ink">Password</label>
-                        <input id="password" type="password" autocomplete="new-password" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                        <input id="password" name="password" type="password" autocomplete="new-password" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
                     </div>
                     <div>
                         <label for="confirm-password" class="mb-1.5 block text-sm font-medium text-ink">Confirm Password</label>
-                        <input id="confirm-password" type="password" autocomplete="new-password" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                        <input id="confirm-password" name="password_confirmation" type="password" autocomplete="new-password" class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
                     </div>
                 </div>
-                <p id="password-error" class="hidden rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-700">Passwords do not match.</p>
+                <p id="password-hint" class="hidden text-xs text-ink/55">Leave blank to keep the current password.</p>
                 <div>
                     <label for="user-role" class="mb-1.5 block text-sm font-medium text-ink">Role</label>
-                    <select id="user-role" required class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
-                        <option value="Administrator">Administrator</option>
-                        <option value="Cashier-Staff">Cashier-Staff</option>
+                    <select id="user-role" name="role" required class="h-11 w-full rounded-lg border border-maroon/15 bg-white px-3 text-sm text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25">
+                        <option value="admin">Administrator</option>
+                        <option value="cashier">Cashier-Staff</option>
                     </select>
                 </div>
                 <div class="flex justify-end gap-3 border-t border-maroon/10 pt-4">
@@ -150,10 +202,12 @@
             </div>
             <h2 id="delete-modal-title" class="mt-4 text-lg font-semibold text-ink">Delete User</h2>
             <p class="mt-2 text-sm leading-relaxed text-ink/65">Are you sure you want to delete <strong id="delete-user-name" class="text-ink"></strong>? This action cannot be undone.</p>
-            <div class="mt-6 flex justify-end gap-3">
+            <form id="delete-form" method="POST" action="{{ route('users') }}" class="mt-6 flex justify-end gap-3">
+                @csrf
+                @method('DELETE')
                 <button id="cancel-delete" type="button" class="min-h-10 rounded-lg border border-maroon/15 px-4 text-sm font-medium text-ink transition hover:bg-maroon/5">Cancel</button>
-                <button id="confirm-delete" type="button" class="min-h-10 rounded-lg bg-red-700 px-4 text-sm font-semibold text-white transition hover:bg-red-800">Delete</button>
-            </div>
+                <button type="submit" class="min-h-10 rounded-lg bg-red-700 px-4 text-sm font-semibold text-white transition hover:bg-red-800">Delete</button>
+            </form>
         </section>
     </div>
 
@@ -161,9 +215,9 @@
         const userModal = document.getElementById('user-modal');
         const deleteModal = document.getElementById('delete-modal');
         const userForm = document.getElementById('user-form');
-        const searchInput = document.getElementById('user-search');
-        const roleFilter = document.getElementById('role-filter');
-        let userIdPendingDelete = null;
+        const updateUrlTemplate = @js(route('users.update', ['user' => '__USER__']));
+        const deleteForm = document.getElementById('delete-form');
+        const currentUserId = @js(auth()->id());
 
         function setModal(modal, isOpen) {
             modal.classList.toggle('hidden', !isOpen);
@@ -171,172 +225,143 @@
             modal.setAttribute('aria-hidden', String(!isOpen));
         }
 
-        function openUserModal(row = null) {
-            const isEditing = Boolean(row);
+        function setMethodOverride(form, method) {
+            let methodInput = form.querySelector('input[name="_method"]');
+
+            if (method) {
+                if (!methodInput) {
+                    methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    form.appendChild(methodInput);
+                }
+
+                methodInput.value = method;
+            } else if (methodInput) {
+                methodInput.remove();
+            }
+        }
+
+        function findUserRow(id) {
+            return [...document.querySelectorAll('[data-user-row]')]
+                .find((row) => row.dataset.userId === String(id));
+        }
+
+        function setSelfRoleValue(isCurrentUser, role) {
+            const roleSelect = document.getElementById('user-role');
+            let hiddenRole = userForm.querySelector('input[data-self-role]');
+            roleSelect.disabled = isCurrentUser;
+
+            if (isCurrentUser) {
+                if (!hiddenRole) {
+                    hiddenRole = document.createElement('input');
+                    hiddenRole.type = 'hidden';
+                    hiddenRole.name = 'role';
+                    hiddenRole.dataset.selfRole = '';
+                    userForm.appendChild(hiddenRole);
+                }
+
+                hiddenRole.value = role;
+            } else if (hiddenRole) {
+                hiddenRole.remove();
+            }
+        }
+
+        function openUserModal(user = null) {
+            userForm.reset();
+            const isEditing = Boolean(user);
+            const isCurrentUser = isEditing && String(user.id) === String(currentUserId);
             document.getElementById('user-modal-title').textContent = isEditing ? 'Edit User' : 'Add User';
             document.getElementById('user-modal-description').textContent = isEditing ? 'Update this staff account.' : 'Create a new spa staff account.';
-            document.getElementById('user-id').value = isEditing ? row.dataset.userId : '';
-            document.getElementById('full-name').value = isEditing ? row.dataset.name : '';
-            document.getElementById('username').value = isEditing ? row.dataset.username : '';
+            document.getElementById('user-id').value = user?.id ?? '';
+            document.getElementById('full-name').value = user?.name ?? '';
+            document.getElementById('username').value = user?.username ?? '';
             document.getElementById('password').value = '';
             document.getElementById('confirm-password').value = '';
-            document.getElementById('password-error').classList.add('hidden');
             document.getElementById('password').required = !isEditing;
             document.getElementById('confirm-password').required = !isEditing;
-            document.getElementById('user-role').value = isEditing ? row.dataset.role : 'Cashier-Staff';
+            document.getElementById('password-hint').classList.toggle('hidden', !isEditing);
+            document.getElementById('user-role').value = user?.role ?? 'cashier';
+            setSelfRoleValue(isCurrentUser, user?.role ?? 'cashier');
+            userForm.action = isEditing
+                ? updateUrlTemplate.replace('__USER__', encodeURIComponent(user.id))
+                : @js(route('users.store'));
+            setMethodOverride(userForm, isEditing ? 'PUT' : null);
             setModal(userModal, true);
             document.getElementById('full-name').focus();
         }
 
-        function closeUserModal() {
-            setModal(userModal, false);
-        }
-
-        function filterUsers() {
-            const query = searchInput.value.trim().toLowerCase();
-            const role = roleFilter.value;
-            let visibleCount = 0;
-            document.querySelectorAll('[data-user-row]').forEach((row) => {
-                const matchesSearch = !query || row.dataset.name.toLowerCase().includes(query) || row.dataset.username.toLowerCase().includes(query);
-                const matchesRole = role === 'All' || row.dataset.role === role;
-                const isVisible = matchesSearch && matchesRole;
-                row.classList.toggle('hidden', !isVisible);
-                if (isVisible) visibleCount += 1;
-            });
-            document.getElementById('no-users').classList.toggle('hidden', visibleCount !== 0);
-            document.getElementById('user-count').textContent = `${visibleCount} user${visibleCount === 1 ? '' : 's'}`;
-        }
+        document.getElementById('password').addEventListener('input', (event) => {
+            document.getElementById('confirm-password').required =
+                !document.getElementById('user-id').value || event.target.value.length > 0;
+        });
 
         document.getElementById('add-user-button').addEventListener('click', () => openUserModal());
-        document.getElementById('close-user-modal').addEventListener('click', closeUserModal);
-        document.getElementById('cancel-user-modal').addEventListener('click', closeUserModal);
-        searchInput.addEventListener('input', filterUsers);
-        roleFilter.addEventListener('change', filterUsers);
-
+        document.getElementById('close-user-modal').addEventListener('click', () => setModal(userModal, false));
+        document.getElementById('cancel-user-modal').addEventListener('click', () => setModal(userModal, false));
         userModal.addEventListener('click', (event) => {
-            if (event.target === userModal) closeUserModal();
+            if (event.target === userModal) {
+                setModal(userModal, false);
+            }
         });
 
-        document.querySelectorAll('[data-user-action]').forEach((button) => {
+        document.querySelectorAll('[data-user-action="edit"]').forEach((button) => {
             button.addEventListener('click', () => {
                 const row = button.closest('[data-user-row]');
-                const action = button.dataset.userAction;
-
-                if (action === 'edit') {
-                    openUserModal(row);
-                } else if (action === 'toggle') {
-                    const isActive = row.dataset.status === 'Active';
-                    row.dataset.status = isActive ? 'Inactive' : 'Active';
-                    const statusCell = row.querySelector('[data-status-cell]');
-                    statusCell.innerHTML = isActive
-                        ? '<span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">Inactive</span>'
-                        : '<span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">Active</span>';
-                    button.textContent = isActive ? 'Activate' : 'Deactivate';
-                } else if (action === 'delete') {
-                    userIdPendingDelete = row.dataset.userId;
-                    document.getElementById('delete-user-name').textContent = row.dataset.name;
-                    setModal(deleteModal, true);
-                }
-            });
-        });
-
-        userForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            if (password !== confirmPassword) {
-                document.getElementById('password-error').classList.remove('hidden');
-                return;
-            }
-            document.getElementById('password-error').classList.add('hidden');
-
-            const id = document.getElementById('user-id').value;
-            const name = document.getElementById('full-name').value.trim();
-            const username = document.getElementById('username').value.trim();
-            const role = document.getElementById('user-role').value;
-
-            if (id) {
-                const row = document.querySelector(`[data-user-row][data-user-id="${id}"]`);
-                row.dataset.name = name;
-                row.dataset.username = username;
-                row.dataset.role = role;
-                row.children[0].textContent = name;
-                row.children[1].textContent = username;
-                row.children[2].innerHTML = role === 'Administrator'
-                    ? '<span class="inline-flex rounded-full bg-maroon/10 px-2.5 py-1 text-xs font-semibold text-maroon">Administrator</span>'
-                    : '<span class="inline-flex rounded-full bg-gold/20 px-2.5 py-1 text-xs font-semibold text-maroon">Cashier-Staff</span>';
-            } else {
-                const tbody = document.getElementById('users-table-body');
-                const newId = String(Date.now());
-                const row = document.createElement('tr');
-                row.dataset.userRow = '';
-                row.dataset.userId = newId;
-                row.dataset.name = name;
-                row.dataset.username = username;
-                row.dataset.role = role;
-                row.dataset.status = 'Active';
-                row.className = 'transition hover:bg-cream/45';
-                row.innerHTML = `
-                    <td class="whitespace-nowrap px-5 py-4 font-medium text-ink">${name}</td>
-                    <td class="whitespace-nowrap px-5 py-4 text-ink/70">${username}</td>
-                    <td class="px-5 py-4">
-                        ${role === 'Administrator'
-                            ? '<span class="inline-flex rounded-full bg-maroon/10 px-2.5 py-1 text-xs font-semibold text-maroon">Administrator</span>'
-                            : '<span class="inline-flex rounded-full bg-gold/20 px-2.5 py-1 text-xs font-semibold text-maroon">Cashier-Staff</span>'}
-                    </td>
-                    <td class="px-5 py-4" data-status-cell><span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">Active</span></td>
-                    <td class="px-5 py-4">
-                        <div class="flex justify-end gap-2">
-                            <button type="button" data-user-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
-                            <button type="button" data-user-action="toggle" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Deactivate</button>
-                            <button type="button" data-user-action="delete" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-50">Delete</button>
-                        </div>
-                    </td>`;
-                tbody.insertBefore(row, document.getElementById('no-users'));
-                attachUserActionListeners(row);
-            }
-            closeUserModal();
-            filterUsers();
-        });
-
-        function attachUserActionListeners(scope) {
-            scope.querySelectorAll('[data-user-action]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const row = button.closest('[data-user-row]');
-                    const action = button.dataset.userAction;
-                    if (action === 'edit') openUserModal(row);
-                    if (action === 'toggle') {
-                        const isActive = row.dataset.status === 'Active';
-                        row.dataset.status = isActive ? 'Inactive' : 'Active';
-                        row.querySelector('[data-status-cell]').innerHTML = isActive
-                            ? '<span class="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">Inactive</span>'
-                            : '<span class="inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">Active</span>';
-                        button.textContent = isActive ? 'Activate' : 'Deactivate';
-                    }
-                    if (action === 'delete') {
-                        userIdPendingDelete = row.dataset.userId;
-                        document.getElementById('delete-user-name').textContent = row.dataset.name;
-                        setModal(deleteModal, true);
-                    }
+                openUserModal({
+                    id: row.dataset.userId,
+                    name: row.dataset.name,
+                    username: row.dataset.username,
+                    role: row.dataset.role,
                 });
             });
-        }
+        });
+
+        document.querySelectorAll('[data-user-action="delete"]').forEach((button) => {
+            button.addEventListener('click', () => {
+                document.getElementById('delete-user-name').textContent = button.dataset.deleteName;
+                deleteForm.action = button.dataset.deleteUrl;
+                setModal(deleteModal, true);
+            });
+        });
 
         document.getElementById('cancel-delete').addEventListener('click', () => setModal(deleteModal, false));
-        document.getElementById('confirm-delete').addEventListener('click', () => {
-            const row = document.querySelector(`[data-user-row][data-user-id="${userIdPendingDelete}"]`);
-            if (row) row.remove();
-            setModal(deleteModal, false);
-            filterUsers();
-        });
         deleteModal.addEventListener('click', (event) => {
-            if (event.target === deleteModal) setModal(deleteModal, false);
-        });
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape') {
-                closeUserModal();
+            if (event.target === deleteModal) {
                 setModal(deleteModal, false);
             }
         });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setModal(userModal, false);
+                setModal(deleteModal, false);
+            }
+        });
+
+        @if ($errors->any())
+            const failedUserId = @js(old('user_id'));
+            const failedUserRow = findUserRow(failedUserId);
+            const failedUser = failedUserRow
+                ? {
+                    id: failedUserRow.dataset.userId,
+                    name: failedUserRow.dataset.name,
+                    username: failedUserRow.dataset.username,
+                    role: failedUserRow.dataset.role,
+                }
+                : (failedUserId
+                    ? {
+                        id: failedUserId,
+                        name: @js(old('name', '')),
+                        username: @js(old('username', '')),
+                        role: @js(old('role', 'cashier')),
+                    }
+                    : null);
+
+            openUserModal(failedUser);
+            document.getElementById('full-name').value = @js(old('name', ''));
+            document.getElementById('username').value = @js(old('username', ''));
+            document.getElementById('user-role').value = @js(old('role', 'cashier'));
+        @endif
     </script>
 @endsection

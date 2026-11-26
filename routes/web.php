@@ -4,6 +4,7 @@ use App\Http\Controllers\AddonController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/login');
@@ -37,5 +38,9 @@ Route::middleware(['auth', 'role:admin'])->group(function (): void {
     Route::put('/addons/{addon}', [AddonController::class, 'update'])->name('addons.update');
     Route::delete('/addons/{addon}', [AddonController::class, 'destroy'])->name('addons.destroy');
     Route::get('/reports', fn () => view('reports'))->name('reports');
-    Route::get('/users', fn () => view('users'))->name('users');
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::patch('/users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 });

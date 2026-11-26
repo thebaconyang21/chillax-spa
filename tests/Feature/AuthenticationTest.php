@@ -42,6 +42,40 @@ class AuthenticationTest extends TestCase
             ->assertSessionHasInput('username', 'cashier');
     }
 
+    public function test_inactive_user_cannot_log_in(): void
+    {
+        User::factory()->create([
+            'username' => 'inactive.cashier',
+            'password' => 'correct-password',
+            'is_active' => false,
+        ]);
+
+        $response = $this->from('/login')->post('/login', [
+            'username' => 'inactive.cashier',
+            'password' => 'correct-password',
+        ]);
+
+        $response->assertRedirect('/login')
+            ->assertSessionHasErrors([
+                'username' => 'Invalid username or password.',
+            ]);
+
+        $this->assertGuest();
+    }
+
+    public function test_inactive_logged_in_user_is_logged_out_by_role_middleware(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'admin',
+            'is_active' => false,
+        ]);
+
+        $this->actingAs($user)->get('/users')
+            ->assertRedirect('/login');
+
+        $this->assertGuest();
+    }
+
     public function test_cashier_is_forbidden_from_admin_only_page(): void
     {
         $cashier = User::factory()->create([
