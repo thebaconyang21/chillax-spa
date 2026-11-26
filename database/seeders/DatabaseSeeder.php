@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             AddonSeeder::class,
             TherapistSeeder::class,
+            TherapistScheduleSeeder::class,
             CustomerSeeder::class,
         ]);
     }

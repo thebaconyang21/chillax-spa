@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AddonController;
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ServiceController;
@@ -20,7 +21,12 @@ Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->n
 
 Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
-    Route::get('/appointments', fn () => view('appointments'))->name('appointments');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments');
+    Route::get('/appointments/available-therapists', [AppointmentController::class, 'availableTherapists'])->name('appointments.available-therapists');
+    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::put('/appointments/{appointment}', [AppointmentController::class, 'update'])->name('appointments.update');
+    Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.status');
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
