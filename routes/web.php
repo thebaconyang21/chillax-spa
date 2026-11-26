@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddonController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,7 +18,11 @@ Route::middleware('auth')->post('/logout', [AuthController::class, 'logout'])->n
 Route::middleware(['auth', 'role:admin,cashier'])->group(function (): void {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
     Route::get('/appointments', fn () => view('appointments'))->name('appointments');
-    Route::get('/customers', fn () => view('customers'))->name('customers');
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
+    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+    Route::put('/customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::get('/pos', fn () => view('pos'))->name('pos');
     Route::get('/transactions', fn () => view('transactions'))->name('transactions');
 });
