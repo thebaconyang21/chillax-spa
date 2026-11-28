@@ -15,7 +15,7 @@
             $dashboardCards = [
                 ['label' => "Today's Sales", 'value' => '₱'.number_format($todaySales, 2), 'note' => number_format($paidTransactionsToday).' paid transactions', 'icon' => 'peso'],
                 ['label' => "Today's Appointments", 'value' => number_format($todayAppointments), 'note' => number_format($completedAppointments).' completed', 'icon' => 'calendar'],
-                ['label' => 'Available Therapists', 'value' => $availableTherapists.' of '.$therapistCount.' therapists', 'note' => 'Currently available', 'icon' => 'person'],
+                ['label' => 'Available Therapists', 'value' => $availableTherapists.' of '.$therapistCount, 'note' => 'Currently available', 'icon' => 'person'],
                 ['label' => 'Pending Appointments', 'value' => number_format($pendingAppointments), 'note' => 'Today and future', 'icon' => 'clock'],
             ];
             if (auth()->user()->isAdmin()) {
@@ -25,12 +25,14 @@
         @endphp
         @foreach ($dashboardCards as $stat)
             <article class="rounded-xl border border-maroon/10 bg-white p-5 shadow-sm">
-                <div class="flex items-start justify-between gap-3"><div class="min-w-0"><p class="text-sm text-ink/65">{{ $stat['label'] }}</p><p class="mt-2 break-words text-2xl font-semibold tracking-tight text-ink">{{ $stat['value'] }}</p><p class="mt-1 text-xs text-ink/50">{{ $stat['note'] }}</p></div><span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-maroon">
+                <div class="flex items-start justify-between gap-3"><p class="min-w-0 text-sm text-ink/65">{{ $stat['label'] }}</p><span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-maroon">
                     @if ($stat['icon'] === 'peso')<span class="text-lg font-semibold">₱</span>
                     @elseif ($stat['icon'] === 'calendar')<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01"/></svg>
                     @elseif ($stat['icon'] === 'person')<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
                     @else<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>@endif
                 </span></div>
+                <p class="mt-4 whitespace-nowrap text-2xl font-semibold tracking-tight text-ink">{{ $stat['value'] }}</p>
+                <p class="mt-1 text-xs text-ink/50">{{ $stat['note'] }}</p>
             </article>
         @endforeach
     </section>
@@ -57,13 +59,11 @@
         <aside class="space-y-6">
             <article class="rounded-xl border border-maroon/10 bg-white p-5 shadow-sm"><h2 class="font-display text-3xl text-maroon">Therapist Availability</h2><div class="mt-4 divide-y divide-maroon/5">
                 @forelse ($therapists as $therapist)
-                    @php
-                        $initials = collect(preg_split('/\s+/', trim($therapist->therapist_name)))->filter()->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode('');
-                        $currentServiceAppointment = $therapist->appointments->first();
-                        $until = $currentServiceAppointment
-                            ? \Illuminate\Support\Carbon::parse($currentServiceAppointment->appointment_date.' '.$currentServiceAppointment->appointment_time, 'Asia/Manila')->addMinutes((int) $currentServiceAppointment->service->duration)->format('H:i')
-                            : null;
-                    @endphp
+                    @php($initials = collect(preg_split('/\s+/', trim((string) $therapist->therapist_name)))->filter()->take(2)->map(fn ($part) => strtoupper(substr($part, 0, 1)))->implode(''))
+                    @php($currentServiceAppointment = $therapist->appointments->first())
+                    @php($until = $currentServiceAppointment && $currentServiceAppointment->service
+                        ? \Illuminate\Support\Carbon::parse($currentServiceAppointment->appointment_date.' '.$currentServiceAppointment->appointment_time, 'Asia/Manila')->addMinutes((int) $currentServiceAppointment->service->duration)->format('H:i')
+                        : null)
                     <div class="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"><div class="flex min-w-0 items-center gap-3"><span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/20 text-xs font-semibold text-maroon">{{ $initials }}</span><div class="min-w-0"><span class="block truncate text-sm font-medium text-ink">{{ $therapist->therapist_name }}</span>@if($therapist->availability_status === 'in_service' && $until)<span class="text-xs text-ink/55">until {{ $until }}</span>@endif</div></div>
                         @if ($therapist->availability_status === 'available')<span class="inline-flex shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Available</span>
                         @elseif ($therapist->availability_status === 'in_service')<span class="inline-flex shrink-0 rounded-full bg-teal-100 px-2.5 py-1 text-xs font-semibold text-teal-700">In Service</span>

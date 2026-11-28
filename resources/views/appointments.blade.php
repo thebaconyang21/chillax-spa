@@ -268,7 +268,7 @@
                         <p id="detail-terminal-status" class="hidden text-sm text-ink/60"></p>
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <button id="save-status" type="submit" class="min-h-10 rounded-lg bg-maroon px-3 py-2 text-sm font-semibold text-white transition hover:bg-maroon/90">Update Status</button>
-                            <button id="edit-appointment" type="button" class="hidden min-h-10 rounded-lg border border-maroon/15 px-3 py-2 text-sm font-semibold text-ink transition hover:border-gold hover:bg-gold/10">Edit Appointment</button>
+                            <button id="edit-appointment" type="button" data-confirm-edit data-confirm-message="Are you sure you want to edit this appointment?" class="hidden min-h-10 rounded-lg border border-maroon/15 px-3 py-2 text-sm font-semibold text-ink transition hover:border-gold hover:bg-gold/10">Edit Appointment</button>
                         </div>
                     </form>
 

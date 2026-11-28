@@ -87,7 +87,7 @@
                             </td>
                             <td class="px-5 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <button type="button" data-service-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Edit</button>
+                                    <button type="button" data-service-action="edit" data-confirm-edit data-record-name="{{ $service->service_name }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Edit</button>
                                     <form method="POST" action="{{ route('services.destroy', $service) }}" data-confirm-delete data-record-name="{{ $service->service_name }}">
                                         @csrf
                                         @method('DELETE')
@@ -133,7 +133,7 @@
                             <td class="whitespace-nowrap px-5 py-4 text-right font-medium text-maroon">₱{{ number_format((float) $addon->price, 2) }}</td>
                             <td class="px-5 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <button type="button" data-addon-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Edit</button>
+                                    <button type="button" data-addon-action="edit" data-confirm-edit data-record-name="{{ $addon->addon_name }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">Edit</button>
                                     <form method="POST" action="{{ route('addons.destroy', $addon) }}" data-confirm-delete data-record-name="{{ $addon->addon_name }}">
                                         @csrf
                                         @method('DELETE')
@@ -340,14 +340,6 @@
                 name: row.dataset.addonName,
                 price: row.dataset.addonPrice,
             });
-        });
-
-        document.addEventListener('submit', (event) => {
-            const form = event.target;
-
-            if (form.matches('[data-confirm-delete]') && !window.confirm(`Delete "${form.dataset.recordName}"?`)) {
-                event.preventDefault();
-            }
         });
 
         document.addEventListener('keydown', (event) => {

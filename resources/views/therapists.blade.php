@@ -150,8 +150,8 @@
                             <td class="px-4 py-4">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" data-therapist-action="view" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">View</button>
-                                    <button type="button" data-therapist-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
-                                    <form method="POST" action="{{ route('therapists.destroy', $therapist) }}" data-confirm-delete data-confirm-message="Delete this therapist?">
+                                    <button type="button" data-therapist-action="edit" data-confirm-edit data-record-name="{{ $therapist->therapist_name }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
+                                    <form method="POST" action="{{ route('therapists.destroy', $therapist) }}" data-confirm-delete data-confirm-message="Are you sure you want to delete this therapist? This action cannot be undone.">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="rounded-lg border border-red-200 px-3 py-2 text-xs font-medium text-red-700 transition hover:bg-red-50">Delete</button>
@@ -414,6 +414,8 @@
                 const edit = document.createElement('button');
                 edit.type = 'button';
                 edit.dataset.editSchedule = '';
+                edit.dataset.confirmEdit = '';
+                edit.dataset.recordName = schedule.date;
                 edit.dataset.schedule = JSON.stringify(schedule);
                 edit.className = 'rounded-lg border border-maroon/15 px-3 py-1.5 text-xs font-medium text-ink hover:border-gold hover:bg-gold/10';
                 edit.textContent = 'Edit';
@@ -421,7 +423,7 @@
                 deleteForm.method = 'POST';
                 deleteForm.action = scheduleDeleteUrl.replace('__SCHEDULE__', encodeURIComponent(schedule.id));
                 deleteForm.dataset.confirmDelete = '';
-                deleteForm.dataset.confirmMessage = 'Delete this schedule?';
+                deleteForm.dataset.confirmMessage = 'Are you sure you want to delete this schedule? This action cannot be undone.';
                 const token = document.createElement('input');
                 token.type = 'hidden';
                 token.name = '_token';
@@ -584,14 +586,6 @@
 
             if (editButton) {
                 openScheduleEditor(JSON.parse(editButton.dataset.schedule));
-            }
-        });
-
-        document.addEventListener('submit', (event) => {
-            const form = event.target.closest('form[data-confirm-delete]');
-
-            if (form && !window.confirm(form.dataset.confirmMessage)) {
-                event.preventDefault();
             }
         });
 

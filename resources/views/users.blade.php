@@ -97,7 +97,7 @@
                             </td>
                             <td class="px-5 py-4">
                                 <div class="flex justify-end gap-2">
-                                    <button type="button" data-user-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
+                                    <button type="button" data-user-action="edit" data-confirm-edit data-record-name="{{ $user->name }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
                                     @if (! $isCurrentUser)
                                         <form method="POST" action="{{ route('users.toggle', $user) }}">
                                             @csrf

@@ -95,7 +95,7 @@
                                 <td class="px-4 py-4 sm:px-5">
                                     <div class="flex justify-end gap-2">
                                         <button type="button" data-customer-action="view" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-maroon transition hover:border-gold hover:bg-gold/10">View</button>
-                                        <button type="button" data-customer-action="edit" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
+                                        <button type="button" data-customer-action="edit" data-confirm-edit data-record-name="{{ $customer->customer_name }}" class="rounded-lg border border-maroon/15 px-3 py-2 text-xs font-medium text-ink transition hover:border-gold hover:bg-gold/10">Edit</button>
                                         <form method="POST" action="{{ route('customers.destroy', $customer) }}" data-confirm-delete data-record-name="{{ $customer->customer_name }}">
                                             @csrf
                                             @method('DELETE')
@@ -445,14 +445,6 @@
                 name: row.dataset.customerName,
                 phone: row.dataset.contactNumber,
             });
-        });
-
-        document.addEventListener('submit', (event) => {
-            const form = event.target;
-
-            if (form.matches('[data-confirm-delete]') && !window.confirm(`Delete "${form.dataset.recordName}"?`)) {
-                event.preventDefault();
-            }
         });
 
         @if ($errors->hasAny(['customer_name', 'contact_number']))
